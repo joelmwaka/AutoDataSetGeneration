@@ -1,0 +1,64 @@
+{
+  "step_selection": {
+    "step_1": true,
+    "step_2": false,
+    "step_3": false,
+    "step_4": false,
+    "step_5": false,
+    "step_6": false
+  },
+
+  "data": {
+    "path_objects": "./data/objects/",
+    "path_background_videos": "./data/background_videos/",
+    "path_background_images": "./data/background_images/",
+    "path_dataset": "./data/dataset/"
+  },
+
+  "modification": {
+    "show_images_object_pose_alteration": false,
+    "num_features": 12,
+    "shape_output_image": [
+      800,
+      600
+    ],
+    "thickness": 150,
+    "viewing_distance": 1000,
+    "range_angles": [
+      -10,
+      10
+    ],
+    "range_scale": [
+      0.1,
+      0.8
+    ],
+    "large_final_image_shape": [
+      1280,
+      720
+    ],
+    "small_final_image_shape": [
+      640,
+      360
+    ],
+    "num_objects_in_image": 1,
+    "image_enhancement": {
+      "noise": {
+        "k": [0.0, 0.2]
+      },
+      "gaussian_smoothing": {
+        "kernel_size": [3, 5],
+        "sigma": 0
+      },
+      "laplacian_edge_enhancement": {
+        "kernel_size": 3
+      },
+      "brightness": {
+        "alpha": [0.8, 1.2],
+        "beta": 0
+      },
+      "saturation": {
+        "factor": [0.7, 1.3]
+      }
+    }
+  }
+}
