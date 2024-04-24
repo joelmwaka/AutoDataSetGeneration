@@ -1,0 +1,53 @@
+debugging: true
+
+# objects
+objects:
+  path_images: "./data/objects/images"
+  path_labels: "./data/objects/labels"
+  # skip: true
+
+# background
+background:
+  sources:
+    images: "./data/background/images/"
+    videos: "./data/background/videos/"
+
+# alteration
+alteration:
+  range_angles:
+    min: -15
+    max: 15
+  range_scale:
+    min: 0.1
+    max: 1.0
+  viewing_distance: 1000
+
+# augmentation
+augmentation:
+  noise:
+    k: [0.0, 0.2]
+  gaussian_smoothing:
+    kernel_size: [3, 5]
+    sigma: 0
+  edge_enhancement:
+    kernel_size: 3
+  brightness:
+    alpha: [0.8, 1.2]
+    beta: 0
+  saturation:
+    factor: [0.7, 1.3]
+
+# automold
+# https://github.com/UjjwalSaxena/Automold--Road-Augmentation-Library
+
+
+
+
+
+# creation
+creation:
+  output_image_shape: [1280, 720]
+
+
+
+
