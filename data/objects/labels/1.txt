@@ -1,0 +1,5 @@
+path_to_image: ./data/objects/images/1.png
+label: vorrang_vor_gegenverkehr
+bounding_box: [0.0, 0.0, 120.0, 120.0]
+num_features: 0
+features: []

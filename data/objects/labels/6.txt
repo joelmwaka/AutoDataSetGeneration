@@ -1,0 +1,5 @@
+path_to_image: ./data/objects/images/6.png
+label: vorfahrt_gewaehren
+bounding_box: [0.0, 0.0, 105.0, 120.0]
+num_features: 0
+features: []

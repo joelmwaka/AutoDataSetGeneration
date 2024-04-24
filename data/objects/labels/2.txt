@@ -1,0 +1,5 @@
+path_to_image: ./data/objects/images/2.png
+label: vorfahrt
+bounding_box: [0.0, 0.0, 105.0, 120.0]
+num_features: 4
+features: [[60.0, 43.0], [50.0, 86.0], [68.0, 86.0], [60.0, 77.0]]
