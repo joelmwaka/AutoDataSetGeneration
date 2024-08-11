@@ -1,5 +1,125 @@
 import os
 import cv2
+import random
+import logging
+
+
+class Source:
+
+    def __init__(self, source_type: str):
+
+        self.source_type = source_type
+
+    def __len__(self):
+
+        raise NotImplementedError
+
+    def get_background_image(self):
+
+        raise NotImplementedError
+
+
+class ImageBGSource(Source):
+
+    def __init__(self, path_images):
+
+        logging.debug("Initializing image background source.")
+
+        source_type = "image"
+        super().__init__(source_type)
+
+        self.path_images = path_images
+        self.list_image_file_names = []
+
+        if os.path.isdir(self.path_images):
+            for file_name in os.listdir(self.path_images):
+                if file_name.split(".")[-1].lower() in ["jpeg", "jpg", "png", "tiff"]:
+                    self.list_image_file_names.append(file_name)
+        else:
+            raise NotADirectoryError(f"{self.path_images} is not a directory.")
+
+        if not len(self):
+            raise FileNotFoundError("No image files were found.")
+
+        logging.debug("Done initializing image background source.")
+
+    def __len__(self):
+
+        return len(self.list_image_file_names)
+
+    def get_background_image(self):
+
+        file_name = random.choice(self.list_image_file_names)
+        file_path = os.path.join(self.path_images, file_name)
+
+        logging.debug(f"Background image: {file_path}")
+
+        return cv2.imread(file_path) if os.path.exists(file_path) else None
+
+
+class VideoBGSource(Source):
+
+    def __init__(self, path_videos):
+
+        logging.debug("Initializing video background source.")
+
+        source_type = "video"
+        super().__init__(source_type)
+
+        self.path_videos = path_videos
+        self.list_video_file_names = []
+
+        if os.path.isdir(self.path_videos):
+            for file_name in os.listdir(self.path_videos):
+                if file_name.split(".")[-1].lower() in ["mp4", "avi", "mkv", "mov", "wmv"]:
+                    self.list_video_file_names.append(file_name)
+        else:
+            raise NotADirectoryError(f"{self.path_videos} is not a directory.")
+
+        if not len(self):
+            raise FileNotFoundError("No video files were found.")
+
+        logging.debug("Done initializing video background source.")
+
+    def __len__(self):
+
+        return len(self.list_video_file_names)
+
+    def get_background_image(self):
+
+        video_file_name = random.choice(self.list_video_file_names)
+        video_file_path = os.path.join(self.path_videos, video_file_name)
+
+        if os.path.exists(video_file_path):
+            cap = cv2.VideoCapture(video_file_path)
+            if not cap.isOpened():
+                raise ValueError(f"Could not open video file: {video_file_path}")
+
+            num_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+            if not num_frames:
+                raise ValueError("The video file has no frames.")
+
+            random_frame_index = random.randint(0, num_frames - 1)
+            cap.set(cv2.CAP_PROP_POS_FRAMES, random_frame_index)
+
+            success, frame = cap.read()
+
+            if not success:
+                raise ValueError("Could not read the frame from the video.")
+
+            cap.release()
+
+            logging.debug(f"Background image: Frame {random_frame_index} from {video_file_path}")
+
+            return frame
+
+
+class BackgroundImage:
+
+    def __init__(self, meta_data, image):
+
+        self.meta_data = meta_data
+        self.image = image
 
 
 class Background:
@@ -8,68 +128,32 @@ class Background:
 
         self.settings = settings
 
-        # get source settings
-        self.path_images = self.settings["sources"]["images"] if self.check_source_setting_exists("images") else None
-        self.path_videos = self.settings["sources"]["videos"] if self.check_source_setting_exists("videos") else None
-        self.youtube_link = self.settings["sources"]["youtube"] if self.check_source_setting_exists("youtube") else None
+        self.path_imgs = self.settings["sources"]["images"] \
+            if self.check_source_setting_exists("images") else None
+        self.path_vids = self.settings["sources"]["videos"] \
+            if self.check_source_setting_exists("videos") else None
 
-        if self.path_images is None and self.path_videos is None and self.youtube_link is None:
-            raise FileNotFoundError("No background source files given.")
+        if self.path_imgs is None and self.path_vids is None:
+            raise FileNotFoundError("No background source files given in settings.yaml. "
+                                    "See README for instructions on how to define "
+                                    "sources for the background images.")
 
-        # get data of sources
-        self.sources_meta_data = []
+        self.sources = []
 
-        if self.path_images:
+        if self.path_imgs:
+            self.sources.append(ImageBGSource(self.path_imgs))
 
-
-            self.sources_meta_data.append({
-                "source": "images",
-                "num_frames": 0,
-            })
-        if self.path_videos:
-
-            videos = []
-
-            for f_name in os.listdir(self.path_videos):
-                video = cv2.VideoCapture(os.path.join(self.path_videos, f_name))
-                if not video.isOpened():
-                    raise ValueError(f"Error opening video file: {f_name} in {self.path_videos}.")
-
-                frame_count = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
-                videos.append({
-                    "path_video": os.path.join(self.path_videos, f_name)
-                    "frame_count": frame_count
-                })
-
-            self.sources_meta_data.append({
-                "source": "videos",
-                "videos": videos
-            })
-        if self.youtube_link
-            pass
-
-        self.file_names = [f_name for f_name in os.listdir(self.path_images) if f_name.lower().endswith(".png")]
-        self.num_images = len(self.file_names)
-
-        self.pointer = 0
+        if self.path_vids:
+            self.sources.append(VideoBGSource(self.path_vids))
 
     def check_source_setting_exists(self, source):
-        """ check if source setting exists """
+
         return True if source in self.settings["sources"].keys() else False
 
-    def choose_background_frame(self):
-        """ choose which frame to """
+    def get_background_image(self) -> BackgroundImage:
 
-    def get_background_image(self):
+        source = random.choice(self.sources)
+        image = source.get_background_image()
+        h, w, c = image.shape
 
-        if self.pointer <= self.num_images - 1:
-            path_image = os.path.join(self.path_images, self.file_names[self.pointer])
-            image = cv2.imread(path_image)
-            height, width, _ = image.shape
-
-            return (height, width), image
-
-        else:
-            print(f"Info: No more background images!")
-
-            return (0, 0), None
+        return BackgroundImage({"height": h, "width": w, "channels": c}, image)
