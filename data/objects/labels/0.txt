@@ -1,0 +1,5 @@
+path_to_image: ./data/objects/images/0.png
+label: ende_vorfahrtstrasse
+bounding_box: [0.0, 0.0, 120.0, 120.0]
+num_features: 2
+features: [[27.0, 60.0], [92.0, 60.0]]

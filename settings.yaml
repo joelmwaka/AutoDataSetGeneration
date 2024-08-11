@@ -1,16 +1,17 @@
-debugging: true
+
 
 # objects
 objects:
+  skip: true
+  features: false
   path_images: "./data/objects/images"
   path_labels: "./data/objects/labels"
-  # skip: true
 
 # background
 background:
   sources:
     images: "./data/background/images/"
-    videos: "./data/background/videos/"
+    # videos: "./data/background/videos/"
 
 # alteration
 alteration:
@@ -40,12 +41,10 @@ augmentation:
 # automold
 # https://github.com/UjjwalSaxena/Automold--Road-Augmentation-Library
 
-
-
-
-
-# creation
-creation:
+# generator
+generator:
+  number_of_samples: 10
+  maximum_objects_per_image: 4
   output_image_shape: [1280, 720]
 
 

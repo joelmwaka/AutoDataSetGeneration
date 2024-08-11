@@ -1,8 +1,7 @@
-import os
 import cv2
 import numpy as np
 from copy import deepcopy
-from generator.utils.objects import Object
+from generator.objects import Object
 
 
 class Alteration:

@@ -1,20 +1,4 @@
 {
-  "step_selection": {
-    "step_1": true,
-    "step_2": false,
-    "step_3": false,
-    "step_4": false,
-    "step_5": false,
-    "step_6": false
-  },
-
-  "data": {
-    "path_objects": "./data/objects/",
-    "path_background_videos": "./data/background_videos/",
-    "path_background_images": "./data/background_images/",
-    "path_dataset": "./data/dataset/"
-  },
-
   "modification": {
     "show_images_object_pose_alteration": false,
     "num_features": 12,

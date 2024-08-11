@@ -7,10 +7,10 @@ class Settings:
 
         self.path_settings = path_settings
 
-        self.debugging = None
         self.objects = None
         self.background = None
         self.alteration = None
+        self.generator = None
 
         self.configure()
 
@@ -19,8 +19,8 @@ class Settings:
         with open(self.path_settings, "r") as file:
             settings = yaml.safe_load(file)
 
-        self.debugging = settings["debugging"]
         self.objects = settings["objects"]
         self.background = settings["background"]
         self.alteration = settings["alteration"]
+        self.generator = settings["generator"]
 
