@@ -2,10 +2,37 @@ import cv2
 import copy
 import random
 import numpy as np
-import sys
+import warnings
 
-utils_module = "DataGeneration/utils"
-sys.path.append(utils_module)
+
+def add_shadow(image_bgr, no_of_shadows=1):
+    """Placeholder for shadow effect - not yet implemented."""
+    warnings.warn("add_shadow() is not implemented. Returning original image.")
+    return image_bgr
+
+
+def add_snow(image_bgr, snow_coeff=0.3):
+    """Placeholder for snow effect - not yet implemented."""
+    warnings.warn("add_snow() is not implemented. Returning original image.")
+    return image_bgr
+
+
+def add_rain(image_bgr, slant=0, rain_type="heavy"):
+    """Placeholder for rain effect - not yet implemented."""
+    warnings.warn("add_rain() is not implemented. Returning original image.")
+    return image_bgr
+
+
+def add_fog(image_bgr, fog_coeff=0.3):
+    """Placeholder for fog effect - not yet implemented."""
+    warnings.warn("add_fog() is not implemented. Returning original image.")
+    return image_bgr
+
+
+def add_speed(image_bgr, speed_coeff=0.2):
+    """Placeholder for speed/motion blur effect - not yet implemented."""
+    warnings.warn("add_speed() is not implemented. Returning original image.")
+    return image_bgr
 
 
 class AlterOriginalImagePose:
@@ -674,7 +701,7 @@ class ImageAlteration:
         # BRIGHTNESS Parameters
         alpha_min = self.config["brightness"]["alpha"][0]
         alpha_max = self.config["brightness"]["alpha"][1]
-        self.brightness_alpha = 2.0  # np.random.uniform(low=alpha_min, high=alpha_max)
+        self.brightness_alpha = np.random.uniform(low=alpha_min, high=alpha_max)
         self.brightness_beta = self.config["brightness"]["beta"]
 
         # SATURATION Parameters
