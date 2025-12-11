@@ -8,12 +8,11 @@ class SingleImageFeaturePicker:
 
     def __init__(self):
 
+        self.input_image = None
         self.input_image_copy = None
         self.num_features = None
         self.features = []
         self.print_done = False
-
-        assert self.num_features != 0, "num_features parameter cannot be 0"
 
     def _click_event(self, event, x, y, flags, params):
 
@@ -32,6 +31,7 @@ class SingleImageFeaturePicker:
     def eventloop(self, path_to_image):
 
         img_input = cv2.imread(path_to_image)
+        self.input_image = copy.deepcopy(img_input)
         self.input_image_copy = copy.deepcopy(img_input)
         self.num_features = None
         self.features.clear()
@@ -80,21 +80,38 @@ class MultipleImageFeaturePicker:
     def __init__(self, path_to_objects):
 
         self.path_to_objects = path_to_objects
+        self.path_to_annotations = os.path.join(path_to_objects, "annotations")
         self.feature_picker = SingleImageFeaturePicker()
+        self.all_features = {}
 
-    def _get_all_filenames(self):
+    def _create_json(self, filename, features):
+        """Save features for a single image to a JSON file."""
+        # Create annotations directory if it doesn't exist
+        os.makedirs(self.path_to_annotations, exist_ok=True)
 
-        pass
-
-    def _create_json(self):
-
+        # Convert features list to dict format
         dict_features = {}
-
-        for index, feature in enumerate(self.features):
+        for index, feature in enumerate(features):
             dict_features[str(index)] = feature
 
-        with open(self.path_json + "features.json", "w") as outfile:
-            json.dump(dict_features, outfile)
+        # Create JSON filename based on image filename
+        base_name = os.path.splitext(filename)[0]
+        json_path = os.path.join(self.path_to_annotations, f"{base_name}_features.json")
+
+        with open(json_path, "w") as outfile:
+            json.dump(dict_features, outfile, indent=2)
+
+        print(f"Info: Saved features to '{json_path}'.")
+
+    def _save_all_features(self):
+        """Save all features to a combined JSON file."""
+        os.makedirs(self.path_to_annotations, exist_ok=True)
+
+        json_path = os.path.join(self.path_to_annotations, "all_features.json")
+        with open(json_path, "w") as outfile:
+            json.dump(self.all_features, outfile, indent=2)
+
+        print(f"Info: Saved all features to '{json_path}'.")
 
     def eventloop(self):
 
@@ -103,7 +120,6 @@ class MultipleImageFeaturePicker:
         print("======================================")
 
         path_to_images = os.path.join(self.path_to_objects, "images")
-        path_to_annotations = os.path.join(self.path_to_objects, "annotations")
 
         files = os.listdir(path_to_images)
         png_files = [file for file in files if file.lower().endswith('.png')]
@@ -114,7 +130,16 @@ class MultipleImageFeaturePicker:
 
             path_to_image = os.path.join(path_to_images, file)
             features = self.feature_picker.eventloop(path_to_image)
-            print(features)
+            print(f"Info: Selected features: {features}")
 
+            # Save features for this image
+            self._create_json(file, features)
 
-        
+            # Store in combined dict
+            self.all_features[file] = features
+
+        # Save combined features file
+        self._save_all_features()
+
+        return self.all_features
+
